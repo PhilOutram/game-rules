@@ -9,10 +9,10 @@
 // "dark"  checkers travel  1 -> 24 and bear off from the top-right (points 19-24).
 
 const VIEW_W = 720;
-const VIEW_H = 440;
+const VIEW_H = 576;      // tall enough that a stack of five checkers fits one half
 const FRAME = 18;        // outer wooden frame thickness
 const BAR_W = 44;        // the raised bar down the middle
-const TRI_H = 168;       // how far a point triangle reaches into the board
+const TRI_H = 250;       // point length - roughly five checkers, so a full point fits
 const CHK_GAP = 2;       // gap between stacked checkers
 
 const PLAY_X = FRAME;
@@ -145,7 +145,7 @@ const hitBoard = board(
 
 // Bearing off: all fifteen light checkers are home (points 1-6), leaving the board.
 // The arrow sits above the home points and sweeps right, "off" the board edge.
-const BEAR_ARROW_Y = 248;
+const BEAR_ARROW_Y = PLAY_Y + PLAY_H / 2;
 const BEAR_ARROW_X1 = 470;
 const BEAR_ARROW_X2 = 700;
 const bearOffBoard = board(
