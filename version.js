@@ -1,8 +1,16 @@
-export const VERSION = "v0.03";
+export const VERSION = "v0.04";
 
 // Newest first. Bump VERSION and prepend an entry on EVERY publish, so the live
 // app always shows exactly what shipped. Dates are YYYY-MM-DD.
 export const CHANGELOG = [
+  {
+    version: "v0.04",
+    date: "2026-08-12",
+    notes: [
+      "Boggle: added a built-in 3-minute round timer with an end chime.",
+      "Boggle: added game-length info and a link to the Game Timer app.",
+    ],
+  },
   {
     version: "v0.03",
     date: "2026-08-12",

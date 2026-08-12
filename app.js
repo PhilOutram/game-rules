@@ -19,10 +19,22 @@ function currentId() {
   return decodeURIComponent((location.hash || "").replace(/^#\/?/, ""));
 }
 
+// A view may return a cleanup function (e.g. the Boggle timer stops its clock);
+// we run it before rendering the next view so nothing keeps ticking off-screen.
+let cleanup = null;
+
 function route() {
+  if (cleanup) {
+    cleanup();
+    cleanup = null;
+  }
   const game = getGame(currentId());
-  if (game) renderGame(game);
-  else renderHome();
+  if (game) {
+    renderGame(game);
+    if (typeof game.mount === "function") cleanup = game.mount(app);
+  } else {
+    renderHome();
+  }
   window.scrollTo(0, 0);
 }
 

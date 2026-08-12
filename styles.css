@@ -232,6 +232,141 @@ code {
   border-bottom: none;
 }
 
+/* Boggle in-app timer */
+.bg-timer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  background: linear-gradient(135deg, #10233a, #14314d);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 1.4rem 1.1rem 1.2rem;
+  margin-bottom: 1.75rem;
+}
+
+.timer-ring-wrap {
+  position: relative;
+  width: clamp(190px, 62vw, 240px);
+  aspect-ratio: 1;
+}
+
+.timer-ring {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.ring-track {
+  fill: none;
+  stroke: rgba(226, 232, 240, 0.12);
+  stroke-width: 14;
+}
+
+.ring-fill {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 14;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.3s linear, stroke 0.3s ease;
+}
+
+.bg-timer.urgent .ring-fill {
+  stroke: #fbbf24;
+}
+
+.bg-timer.done .ring-fill {
+  stroke: #f87171;
+}
+
+.timer-face {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  text-align: center;
+  line-height: 1.1;
+}
+
+.timer-time {
+  font-size: clamp(2.6rem, 13vw, 3.5rem);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+
+.bg-timer.urgent .timer-time {
+  color: #fbbf24;
+}
+
+.bg-timer.done .timer-time {
+  color: #f87171;
+}
+
+.timer-sub {
+  color: var(--muted);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.timer-controls {
+  display: flex;
+  gap: 0.7rem;
+}
+
+.t-btn {
+  font: inherit;
+  font-weight: 700;
+  color: var(--text);
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0.55rem 1.6rem;
+  cursor: pointer;
+  min-width: 6rem;
+}
+
+.t-btn.primary {
+  background: var(--accent);
+  color: #06283d;
+  border-color: transparent;
+}
+
+.t-btn:active {
+  transform: translateY(1px);
+}
+
+.timer-note {
+  color: var(--muted);
+  font-size: 0.85rem;
+  text-align: center;
+  margin: 0;
+  max-width: 30rem;
+}
+
+.timer-note a {
+  color: var(--accent);
+}
+
+@keyframes timerflash {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(248, 113, 113, 0); }
+  50% { box-shadow: 0 0 0 4px rgba(248, 113, 113, 0.7); }
+}
+
+.bg-timer.flash {
+  animation: timerflash 0.45s ease-in-out 2;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ring-fill {
+    transition: none;
+  }
+  .bg-timer.flash {
+    animation: none;
+  }
+}
+
 .cap {
   color: var(--muted);
   font-size: 0.88rem;

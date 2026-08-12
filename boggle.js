@@ -77,6 +77,15 @@ const scoreTable = `
   </tbody>
 </table>`;
 
+// ---- Timer constants -------------------------------------------------------
+const ROUND_SECONDS = 180;              // a Boggle round is exactly three minutes
+const RING_R = 100;                     // matches the SVG circle r="100"
+const RING_CIRC = 2 * Math.PI * RING_R; // dash length for the full countdown ring
+const TICK_MS = 200;                    // how often the countdown refreshes
+const PIP_FROM = 5;                     // start the per-second pips this many secs out
+const URGENT_FROM = 30;                 // turn the ring amber under this many secs
+const FLASH_MS = 900;                   // how long the end-of-round flash lasts
+
 // ---- The guide -------------------------------------------------------------
 export const boggle = {
   id: "boggle",
@@ -91,7 +100,32 @@ export const boggle = {
   <p>Everyone hunts the <em>same</em> grid of letters at the same time, writing down as many words as
      they can before the timer runs out. The longer the word, the more it scores - so a couple of long
      words can beat a big pile of short ones.</p>
+  <p><strong>How long does it take?</strong> One round is a single <strong>3-minute</strong> timer.
+     Most families play <strong>best of three rounds</strong>, so a whole game runs about
+     <strong>10-15 minutes</strong> once you add reading out words and scoring. Agree how many rounds
+     you'll play before you start.</p>
 </section>
+
+<div class="bg-timer" id="bgTimer">
+  <div class="timer-ring-wrap">
+    <svg class="timer-ring" viewBox="0 0 220 220" aria-hidden="true">
+      <circle class="ring-track" cx="110" cy="110" r="100" />
+      <circle class="ring-fill" id="ringFill" cx="110" cy="110" r="100" transform="rotate(-90 110 110)" />
+    </svg>
+    <div class="timer-face">
+      <div class="timer-time" id="timerTime">3:00</div>
+      <div class="timer-sub">one round</div>
+    </div>
+  </div>
+  <div class="timer-controls">
+    <button class="t-btn primary" id="btnStart" type="button">Start</button>
+    <button class="t-btn" id="btnReset" type="button">Reset</button>
+  </div>
+  <p class="timer-note">A built-in 3-minute timer, with a chime when the round ends. Keep this page open
+     while you play - or open the
+     <a href="https://philoutram.github.io/timer-app/?t=180" target="_blank" rel="noopener">Game Timer
+     app</a> preset to 3 minutes for a big full-screen version.</p>
+</div>
 
 <div class="rule">
   <span class="step">1</span>
@@ -158,5 +192,181 @@ export const boggle = {
   </ul>
 </div>
 `;
+  },
+
+  // Wire up the built-in countdown after the guide is inserted. Returns a cleanup
+  // function the router calls when you navigate away (stops the clock, drops the
+  // wake lock). Uses performance.now() as the clock so a backgrounded tab stays
+  // accurate instead of drifting with throttled intervals.
+  mount(root) {
+    const panel = root.querySelector("#bgTimer");
+    if (!panel) return () => {};
+    const timeEl = root.querySelector("#timerTime");
+    const ringEl = root.querySelector("#ringFill");
+    const startBtn = root.querySelector("#btnStart");
+    const resetBtn = root.querySelector("#btnReset");
+
+    let remaining = ROUND_SECONDS;
+    let running = false;
+    let interval = null;
+    let endAt = 0;
+    let lastPip = -1;
+    let wakeLock = null;
+    let audioCtx = null;
+
+    ringEl.style.strokeDasharray = RING_CIRC;
+
+    const fmt = (s) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+
+    function draw() {
+      timeEl.textContent = fmt(remaining);
+      ringEl.style.strokeDashoffset = RING_CIRC * (1 - remaining / ROUND_SECONDS);
+      panel.classList.toggle("urgent", remaining > 0 && remaining <= URGENT_FROM);
+    }
+
+    // --- sound: Web Audio, no files, one shared context unlocked on first tap ---
+    function ctx() {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return null;
+      if (!audioCtx) audioCtx = new AC();
+      return audioCtx;
+    }
+    function unlock() {
+      const c = ctx();
+      if (c && c.state === "suspended") c.resume();
+    }
+    function beep(freq, dur, vol) {
+      try {
+        const c = ctx();
+        if (!c) return;
+        if (c.state === "suspended") c.resume();
+        const osc = c.createOscillator();
+        const gain = c.createGain();
+        osc.connect(gain);
+        gain.connect(c.destination);
+        osc.type = "sine";
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(vol, c.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, c.currentTime + dur / 1000);
+        osc.start(c.currentTime);
+        osc.stop(c.currentTime + dur / 1000);
+      } catch (e) {
+        // audio unavailable - stay silent
+      }
+    }
+    const pip = () => beep(760, 90, 0.14);
+    function endChime() {
+      beep(660, 160, 0.4);
+      setTimeout(() => beep(880, 160, 0.4), 200);
+      setTimeout(() => beep(1100, 320, 0.5), 420);
+    }
+
+    // --- keep the screen awake only while the clock runs ---
+    async function lockScreen() {
+      if (!("wakeLock" in navigator) || wakeLock) return;
+      try {
+        wakeLock = await navigator.wakeLock.request("screen");
+        wakeLock.addEventListener("release", () => (wakeLock = null));
+      } catch (e) {
+        // unsupported, denied, or hidden - ignore
+      }
+    }
+    async function releaseScreen() {
+      if (!wakeLock) return;
+      try {
+        await wakeLock.release();
+      } catch (e) {
+        // already gone
+      }
+      wakeLock = null;
+    }
+
+    function stopClock() {
+      clearInterval(interval);
+      interval = null;
+    }
+
+    function tick() {
+      remaining = Math.max(0, Math.round((endAt - performance.now()) / 1000));
+      if (running && remaining > 0 && remaining <= PIP_FROM && remaining !== lastPip) {
+        lastPip = remaining;
+        pip();
+      }
+      draw();
+      if (remaining <= 0) finish();
+    }
+
+    function start() {
+      if (running) return;
+      if (remaining <= 0) remaining = ROUND_SECONDS;
+      running = true;
+      lastPip = -1;
+      endAt = performance.now() + remaining * 1000;
+      panel.classList.remove("done");
+      startBtn.textContent = "Pause";
+      lockScreen();
+      interval = setInterval(tick, TICK_MS);
+    }
+
+    function pause() {
+      if (!running) return;
+      running = false;
+      stopClock();
+      remaining = Math.max(0, Math.round((endAt - performance.now()) / 1000));
+      startBtn.textContent = remaining > 0 ? "Resume" : "Start";
+      releaseScreen();
+      draw();
+    }
+
+    function finish() {
+      running = false;
+      stopClock();
+      remaining = 0;
+      draw();
+      panel.classList.remove("urgent");
+      panel.classList.add("done");
+      startBtn.textContent = "Start";
+      endChime();
+      releaseScreen();
+      panel.classList.add("flash");
+      setTimeout(() => panel.classList.remove("flash"), FLASH_MS);
+    }
+
+    function reset() {
+      running = false;
+      stopClock();
+      remaining = ROUND_SECONDS;
+      lastPip = -1;
+      panel.classList.remove("done", "urgent");
+      startBtn.textContent = "Start";
+      releaseScreen();
+      draw();
+    }
+
+    const onStart = () => {
+      unlock();
+      running ? pause() : start();
+    };
+    const onReset = () => {
+      unlock();
+      reset();
+    };
+    const onVisible = () => {
+      if (document.visibilityState === "visible" && running) lockScreen();
+    };
+
+    startBtn.addEventListener("click", onStart);
+    resetBtn.addEventListener("click", onReset);
+    document.addEventListener("visibilitychange", onVisible);
+
+    draw();
+
+    return () => {
+      stopClock();
+      releaseScreen();
+      startBtn.removeEventListener("click", onStart);
+      resetBtn.removeEventListener("click", onReset);
+      document.removeEventListener("visibilitychange", onVisible);
+    };
   },
 };
