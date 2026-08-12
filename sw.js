@@ -1,7 +1,7 @@
 // Minimal offline-first service worker.
 // Bump the version in CACHE whenever you change the cached files, and keep ASSETS
 // in sync with the files the app needs to work offline.
-const CACHE = "game-rules-v2";
+const CACHE = "game-rules-v3";
 const ASSETS = [
   ".",
   "index.html",
@@ -9,6 +9,7 @@ const ASSETS = [
   "app.js",
   "games.js",
   "backgammon.js",
+  "boggle.js",
   "version.js",
   "manifest.webmanifest",
   "icon.svg",

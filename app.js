@@ -78,6 +78,16 @@ function gameIcon(key) {
       <circle cx="21" cy="14" r="4" fill="#26262b" />
     </svg>`;
   }
+  if (key === "boggle") {
+    const tile = (x, y, ch) =>
+      `<rect x="${x}" y="${y}" width="17" height="17" rx="4" fill="#f5efe1" stroke="#c8b48f" stroke-width="1.5" />` +
+      `<text x="${x + 8.5}" y="${y + 9}" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="800" fill="#1f2937">${ch}</text>`;
+    return `<svg viewBox="0 0 48 48" aria-hidden="true">
+      <rect x="3" y="3" width="42" height="42" rx="9" fill="#5c3a22" />
+      <rect x="6" y="6" width="36" height="36" rx="6" fill="#c79a6b" />
+      ${tile(9, 9, "B")}${tile(27, 9, "O")}${tile(9, 27, "G")}${tile(27, 27, "E")}
+    </svg>`;
+  }
   return `<svg viewBox="0 0 48 48" aria-hidden="true"><rect x="6" y="6" width="36" height="36" rx="8" fill="#334155" /></svg>`;
 }
 

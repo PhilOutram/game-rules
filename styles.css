@@ -191,6 +191,47 @@ code {
   border-radius: 12px;
 }
 
+/* Boggle letter grid - keep it a sensible size, not full-width */
+.grid {
+  display: block;
+  width: 100%;
+  max-width: 320px;
+  height: auto;
+  margin: 0.6rem auto 0.4rem;
+}
+
+/* Scoring table */
+.score-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0.4rem 0 0.7rem;
+  font-size: 0.98rem;
+}
+
+.score-table th,
+.score-table td {
+  text-align: left;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.score-table thead th {
+  color: var(--accent);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.score-table td:last-child,
+.score-table th:last-child {
+  text-align: right;
+  width: 5.5rem;
+}
+
+.score-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
 .cap {
   color: var(--muted);
   font-size: 0.88rem;
