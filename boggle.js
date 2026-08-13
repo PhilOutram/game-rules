@@ -123,8 +123,8 @@ export const boggle = {
   </div>
   <p class="timer-note">A built-in 3-minute timer, with a chime when the round ends. Keep this page open
      while you play - or open the
-     <a href="https://philoutram.github.io/timer-app/?t=180" target="_blank" rel="noopener">Game Timer
-     app</a> preset to 3 minutes for a big full-screen version.</p>
+     <a href="https://philoutram.github.io/timer-app/?t=180&loop=0" target="_blank" rel="noopener">Game
+     Timer app</a> preset to a single 3-minute round for a big full-screen version.</p>
 </div>
 
 <div class="rule">
