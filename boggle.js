@@ -106,6 +106,12 @@ export const boggle = {
      you'll play before you start.</p>
 </section>
 
+<a class="play-cta" href="https://philoutram.github.io/boggle/" target="_blank" rel="noopener">
+  <span class="play-ico" aria-hidden="true">&#9654;</span>
+  <span class="play-text"><strong>Play Boggle</strong>
+    <small>Full game: shake a real letter board that turns to stay fair for all players.</small></span>
+</a>
+
 <div class="bg-timer" id="bgTimer">
   <div class="timer-ring-wrap">
     <svg class="timer-ring" viewBox="0 0 220 220" aria-hidden="true">
