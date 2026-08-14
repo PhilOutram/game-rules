@@ -1,8 +1,17 @@
-export const VERSION = "v0.06";
+export const VERSION = "v0.07";
 
 // Newest first. Bump VERSION and prepend an entry on EVERY publish, so the live
 // app always shows exactly what shipped. Dates are YYYY-MM-DD.
 export const CHANGELOG = [
+  {
+    version: "v0.07",
+    date: "2026-08-14",
+    notes: [
+      "Added President and Cambio - our first two card game guides.",
+      "President: illustrated card ranking, a worked trick, and the President/Scum swap.",
+      "Cambio: the 2x2 grid, a worked turn, snapping, and the full power-card table.",
+    ],
+  },
   {
     version: "v0.06",
     date: "2026-08-13",

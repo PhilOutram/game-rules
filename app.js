@@ -100,6 +100,30 @@ function gameIcon(key) {
       ${tile(9, 9, "B")}${tile(27, 9, "O")}${tile(9, 27, "G")}${tile(27, 27, "E")}
     </svg>`;
   }
+  if (key === "president") {
+    // A fan of three cards: two tucked behind, an ace of spades face on.
+    const back = (x, rot) =>
+      `<rect x="${x}" y="12" width="20" height="28" rx="3" fill="#f5efe1" stroke="#c8b48f" stroke-width="1.5" transform="rotate(${rot} ${x + 10} 40)" />`;
+    return `<svg viewBox="0 0 48 48" aria-hidden="true">
+      <rect x="3" y="3" width="42" height="42" rx="9" fill="#5c3a22" />
+      <rect x="6" y="6" width="36" height="36" rx="6" fill="#c79a6b" />
+      ${back(14, -22)}${back(14, 22)}
+      <rect x="14" y="10" width="20" height="28" rx="3" fill="#f5efe1" stroke="#c8b48f" stroke-width="1.5" />
+      <text x="24" y="25" text-anchor="middle" dominant-baseline="central" font-size="16" fill="#1f2937">&#9824;</text>
+    </svg>`;
+  }
+  if (key === "cambio") {
+    // Four cards face down in a square, with the last one turned over.
+    const back = (x, y) =>
+      `<rect x="${x}" y="${y}" width="13" height="15" rx="2.5" fill="#b91c1c" stroke="#7f1d1d" stroke-width="1.5" />`;
+    return `<svg viewBox="0 0 48 48" aria-hidden="true">
+      <rect x="3" y="3" width="42" height="42" rx="9" fill="#5c3a22" />
+      <rect x="6" y="6" width="36" height="36" rx="6" fill="#c79a6b" />
+      ${back(10, 8)}${back(25, 8)}${back(10, 25)}
+      <rect x="25" y="25" width="13" height="15" rx="2.5" fill="#f5efe1" stroke="#c8b48f" stroke-width="1.5" />
+      <text x="31.5" y="33" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="800" fill="#b91c1c">K</text>
+    </svg>`;
+  }
   return `<svg viewBox="0 0 48 48" aria-hidden="true"><rect x="6" y="6" width="36" height="36" rx="8" fill="#334155" /></svg>`;
 }
 

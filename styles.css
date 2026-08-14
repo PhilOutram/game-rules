@@ -200,6 +200,16 @@ code {
   margin: 0.6rem auto 0.4rem;
 }
 
+/* Playing-card figures - capped so the cards stay a believable size on a big
+   screen, and centred like the Boggle grid */
+.cards {
+  display: block;
+  width: 100%;
+  max-width: 460px;
+  height: auto;
+  margin: 0.6rem auto 0.4rem;
+}
+
 /* Scoring table */
 .score-table {
   width: 100%;
@@ -230,6 +240,13 @@ code {
 
 .score-table tbody tr:last-child td {
   border-bottom: none;
+}
+
+/* A table whose last column is prose rather than a number, so it needs the room */
+.score-table.wide td:last-child,
+.score-table.wide th:last-child {
+  text-align: left;
+  width: auto;
 }
 
 /* Play Boggle call-to-action */
@@ -425,6 +442,14 @@ code {
   height: 1.5em;
   vertical-align: -0.35em;
   margin: 0 0.05em;
+}
+
+/* Inline playing card - taller than it is wide, so it needs its own box */
+.card-inline {
+  width: 1.15em;
+  height: 1.62em;
+  vertical-align: -0.42em;
+  margin: 0 0.08em;
 }
 
 /* Lists */
