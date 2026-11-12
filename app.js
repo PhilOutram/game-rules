@@ -1,6 +1,6 @@
 // Family Game Rules - a tiny hash router between a home menu and each game guide.
-import { VERSION, CHANGELOG } from "./version.js";
-import { GAMES, getGame } from "./games.js";
+import { VERSION, CHANGELOG } from "./version.js?v=0.08";
+import { GAMES, getGame } from "./games.js?v=0.08";
 
 const app = document.getElementById("app");
 

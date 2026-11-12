@@ -10,7 +10,7 @@
 import {
   FIG_W, CARD_W, CARD_H, CARD_GAP,
   cardsAt, arrow, figure, figureLabel, inlineCard,
-} from "./cards.js";
+} from "./cards.js?v=0.08";
 
 const GRID_W = CARD_W * 2 + CARD_GAP;   // a player's 2x2 square is two cards wide
 const ROW_GAP = 12;                     // vertical gap between the two grid rows

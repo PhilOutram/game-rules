@@ -9,7 +9,7 @@ import {
   FIG_W, CARD_W, CARD_H, CARD_GAP, CARD_STEP, FIG_PAD,
   PANEL_EDGE, LABEL, MUTED, ACCENT,
   cardsAt, arrow, figure, figureLabel, inlineCard,
-} from "./cards.js";
+} from "./cards.js?v=0.08";
 
 // A "passes" chip, drawn where that player's cards would have gone.
 function passChip(x, y) {
